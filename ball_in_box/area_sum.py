@@ -1,4 +1,5 @@
 import math
+import random
 import ball_in_box.ballinbox as bb
 import ball_in_box.validate as val
 
@@ -11,9 +12,9 @@ def area_sum(circles):
 
 if __name__ == '__main__':
     num_of_circle = 5
-    blockers = [(0.5, 0.5)
-               ,(0.5, -0.3)]
-    
+    blockers=[(0.5, 0.5), (0.5, -0.5), (0.5, 0.3)]
+
+    # blockers=[]
     circles = bb.ball_in_box(num_of_circle, blockers)
     
     if num_of_circle == len(circles) and val.validate(circles, blockers):
@@ -21,6 +22,8 @@ if __name__ == '__main__':
         print("Total area: {}".format(area))
     else:
         print("Error: no good circles.")
+
+
 
 
 

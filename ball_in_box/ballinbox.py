@@ -3,6 +3,12 @@ import random
 from .validate import validate
 
 __all__ = ['ball_in_box']
+def area_sum_c(circles):
+    area = 0.0
+    for circle in circles:
+        area += circle[2]**2 * math.pi
+
+    return area
 
 def ball_in_box(m=5, blockers=[(0.5, 0.5), (0.5, -0.5), (0.5, 0.3)]):
     """
@@ -12,21 +18,28 @@ def ball_in_box(m=5, blockers=[(0.5, 0.5), (0.5, -0.5), (0.5, 0.3)]):
     This returns a list of tuple, composed of x,y of the circle and r of the circle.
     """
 
-    # The following is an example implementation.
-    circles = []
-    for circle_index in range(m):
+    #brute force 100 times
+    best_circles = []
+    best_ans=0
+    for iter in range(100):
+        current_circles = []
+        for circle_index in range(m):
 
-        x = random.random()*2 - 1
-        y = random.random()*2 - 1
-        r = random.random()*0.1
-
-        circles.append((x, y, r))
-        while not validate(circles, blockers):
             x = random.random()*2 - 1
             y = random.random()*2 - 1
-            r = random.random()*0.1
-            circles[circle_index] = (x, y, r)
+            r = random.random()*1
 
-        circle_index += 1
-    
-    return circles
+            current_circles.append((x, y, r))
+            while not validate(current_circles, blockers):
+                x = random.random()*2 - 1
+                y = random.random()*2 - 1
+                r = random.random()*0.1
+                current_circles[circle_index] = (x, y, r)
+
+            circle_index += 1
+        current_sum=area_sum_c(current_circles)
+        if current_sum > best_ans:
+                best_circles=current_circles
+                best_ans=current_sum
+
+    return best_circles
