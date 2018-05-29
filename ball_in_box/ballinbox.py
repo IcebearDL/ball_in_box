@@ -21,7 +21,8 @@ def ball_in_box(m=5, blockers=[(0.5, 0.5), (0.5, -0.5), (0.5, 0.3)]):
     #brute force 100 times
     best_circles = []
     best_ans=0
-    for iter in range(100):
+    tim=(int)(5000/((m/5)**(math.log(6,2))))
+    for iter in range(tim):
         current_circles = []
         for circle_index in range(m):
 

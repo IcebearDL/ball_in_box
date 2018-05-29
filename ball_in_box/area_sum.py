@@ -1,4 +1,5 @@
 import math
+import time
 import random
 import ball_in_box.ballinbox as bb
 import ball_in_box.validate as val
@@ -11,7 +12,9 @@ def area_sum(circles):
     return area
 
 if __name__ == '__main__':
-    num_of_circle = 5
+
+    start = time.clock()
+    num_of_circle =5
     blockers=[(0.5, 0.5), (0.5, -0.5), (0.5, 0.3)]
 
     # blockers=[]
@@ -20,6 +23,7 @@ if __name__ == '__main__':
     if num_of_circle == len(circles) and val.validate(circles, blockers):
         area = area_sum(circles)
         print("Total area: {}".format(area))
+        print(time.clock()-start)
     else:
         print("Error: no good circles.")
 
