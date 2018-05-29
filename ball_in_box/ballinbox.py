@@ -21,20 +21,19 @@ def ball_in_box(m=5, blockers=[(0.5, 0.5), (0.5, -0.5), (0.5, 0.3)]):
     #brute force 100 times
     best_circles = []
     best_ans=0
+    blockers_l=len(blockers)
+    generate_three=lambda : [random.random()*2 - 1,random.random()*2 - 1,random.random()**blockers_l]
+
     tim=(int)(5000/((m/5)**(math.log(6,2))))
     for iter in range(tim):
         current_circles = []
         for circle_index in range(m):
 
-            x = random.random()*2 - 1
-            y = random.random()*2 - 1
-            r = random.random()*1
+            [x,y,r]=generate_three()
 
             current_circles.append((x, y, r))
             while not validate(current_circles, blockers):
-                x = random.random()*2 - 1
-                y = random.random()*2 - 1
-                r = random.random()*0.1
+                [x, y, r] =generate_three()
                 current_circles[circle_index] = (x, y, r)
 
             circle_index += 1
