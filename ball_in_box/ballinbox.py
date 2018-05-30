@@ -12,7 +12,7 @@ def area_sum_c(circles):
     return area
 
 
-def max_residue_distance(tup,circles):
+def max_residue_distance(tup,circles): #计算圆能增长的最大半径
     res = float('inf')
     x = tup[0]
     y = tup[1]
@@ -29,23 +29,26 @@ def max_residue_distance(tup,circles):
 
 
 def ball_in_box(m=5, blockers=[(0.5, 0.5), (0.5, -0.5), (0.5, 0.3)]):
-
     best_circles = []
+    if m == 0:  # ugly
+        return best_circles
     best_sum = 0
     blockers_l=len(blockers)
     init_circle=[]
     for tup in blockers:
-        init_circle.append((tup[0],tup[1],0))
+        init_circle.append((tup[0],tup[1],0))  # blockers 当做 半径0气球
 
-    generate_three = lambda: (random.random()*2 - 1,random.random()*2 - 1, 0)
+    generate_three = lambda: (random.random()*2 - 1,random.random()*2 - 1, 0)  # 随机生成圆(半径为0)
 
-    tim =(int)(500000/(pow(m,1.65)))
-    if tim == 0:
+    tim =(int)(500000/(pow(m,1.65)))  # 迭代次数
+    # tim=10000000
+    # print(tim)
+    if tim == 0:  # 如果m非常大
         tim = 1
     for _ in range(tim):
         current_circles = init_circle[:]
         while True:
-            (x, y, _) = generate_three()
+            x, y, _ = generate_three()
 
             dis = max_residue_distance((x, y, 0), current_circles) - 0.0000000001  # precision control like cpp
 
