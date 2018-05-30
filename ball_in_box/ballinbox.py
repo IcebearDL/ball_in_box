@@ -1,8 +1,10 @@
 import math
 import random
-from .validate import validate
+from time import sleep
 
 __all__ = ['ball_in_box']
+
+
 def area_sum_c(circles):
     area = 0.0
     for circle in circles:
@@ -10,36 +12,50 @@ def area_sum_c(circles):
 
     return area
 
+
+def max_residue_distance(tup,circles):
+    res = float('inf')
+    x = tup[0]
+    y = tup[1]
+
+    if x <= -1 or x >= 1 or y <= -1 or y >= 1:
+        return 0
+    else:
+        res = min(res, 1-x, x+1, 1-y, y+1)
+    for circle in circles:
+        res = min(res, math.sqrt((circle[0] - x)**2 + (circle[1] - y)**2) - circle[2])
+        if res <= 0:
+            return 0
+    return res
+
+
 def ball_in_box(m=5, blockers=[(0.5, 0.5), (0.5, -0.5), (0.5, 0.3)]):
-    """
-    m is the number circles.
-    n is the list of coordinates of tiny blocks.
-    
-    This returns a list of tuple, composed of x,y of the circle and r of the circle.
-    """
 
-    #brute force 100 times
     best_circles = []
-    best_ans=0
+    best_sum = 0
     blockers_l=len(blockers)
-    generate_three=lambda : [random.random()*2 - 1,random.random()*2 - 1,random.random()**blockers_l]
+    init_circle=[]
+    for tup in blockers:
+        init_circle.append((tup[0],tup[1],0))
 
-    tim=(int)(5000/((m/5)**(math.log(6,2))))
-    for iter in range(tim):
-        current_circles = []
-        for circle_index in range(m):
+    generate_three = lambda: (random.random()*2 - 1,random.random()*2 - 1, 0)
 
-            [x,y,r]=generate_three()
+    tim =(int)(500000/(pow(m,1.65)))
+    if tim == 0:
+        tim = 1
+    for _ in range(tim):
+        current_circles = init_circle[:]
+        while True:
+            (x, y, _) = generate_three()
 
-            current_circles.append((x, y, r))
-            while not validate(current_circles, blockers):
-                [x, y, r] =generate_three()
-                current_circles[circle_index] = (x, y, r)
+            dis = max_residue_distance((x, y, 0), current_circles) - 0.0000000001  # precision control like cpp
 
-            circle_index += 1
-        current_sum=area_sum_c(current_circles)
-        if current_sum > best_ans:
-                best_circles=current_circles
-                best_ans=current_sum
-
-    return best_circles
+            if dis > 0:
+                current_circles.append((x, y, dis))
+                if len(current_circles) >= m + blockers_l:
+                    break
+        current_sum = area_sum_c(current_circles)
+        if current_sum > best_sum:
+            best_circles = current_circles
+            best_sum = current_sum
+    return best_circles[blockers_l:]
