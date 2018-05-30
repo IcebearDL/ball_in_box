@@ -1,6 +1,5 @@
 import math
 import random
-from time import sleep
 
 __all__ = ['ball_in_box']
 
