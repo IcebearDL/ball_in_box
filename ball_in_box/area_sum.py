@@ -24,28 +24,29 @@ if __name__ == '__main__':
 
     for i in range(1):
         start = time.clock()
-        ii = i*100+1
+        ii = 5  # ii 是气球数
         num_of_circle = ii
         x.append(ii)
-        # blockers = [(0.5, 0.5), (-0.5, -0.5), (0.5, 0.3),[-0.3,0.9],[0.1,0.1],[0.2,0.2],[-0.1,-0.1]]
-        blockers = []
-
+        blockers = [(0.5, 0.5)
+            , (0.5, -0.3)]
         circles = bb.ball_in_box(num_of_circle, blockers)
 
+        fig, ax = plt.subplots()
+        plt.xlim((-1, 1))
+        plt.ylim((-1, 1))
+        for circle in circles:
+            ax.add_artist(plt.Circle((circle[0], circle[1]), circle[2]))
+        for blocker in blockers:
+            ax.add_artist(plt.Circle((blocker[0], blocker[1]), 0.01, color='r'))
+        area = area_sum(circles)
+        ax.set_xlabel(area)
+        plt.savefig("../m=" + str(ii) + ".png")
+        plt.show()
+        plt.gcf().clear()
+
         if num_of_circle == len(circles) and val.validate(circles, blockers):
-            area = area_sum(circles)
-            print("Total area: {}".format(area))
             y.append(time.clock()-start)
-            fig, ax = plt.subplots()
-            plt.xlim((-1, 1))
-            plt.ylim((-1, 1))
-            for circle in circles:
-                ax.add_artist(plt.Circle((circle[0], circle[1]), circle[2]))
-            for blocker in blockers:
-                ax.add_artist(plt.Circle((blocker[0], blocker[1]), 0.01, color='r'))
-            plt.savefig("../src/m="+str(ii)+".png")
-            plt.show()
-            plt.gcf().clear()
+            print("Total area: {}".format(area))
         else:
             print("Error: no good circles.")
 
