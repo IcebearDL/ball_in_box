@@ -1,5 +1,5 @@
 # ball_in_box lab1
-
+![](m=5.png)
 ## envs
 
     requirements.txt
