@@ -1,9 +1,12 @@
 import math
 import time
-import ball_in_box.ballinbox as bb
-import ball_in_box.validate as val
 from scipy.optimize import curve_fit
 import matplotlib.pyplot as plt
+import os
+import sys
+sys.path.append(os.getcwd())
+import ball_in_box.ballinbox as bb
+import ball_in_box.validate as val
 
 def area_sum(circles):
     area = 0.0
