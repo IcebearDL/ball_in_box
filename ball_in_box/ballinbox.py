@@ -1,22 +1,14 @@
 import math
 import random
+from time import sleep
 
 __all__ = ['ball_in_box']
 
 
-def area_sum_c(circles):
-    area = 0.0
-    for circle in circles:
-        area += circle[2]**2 * math.pi
 
-    return area
-
-
-def max_residue_distance(tup,circles): #计算圆能增长的最大半径
+def max_residue_distance(tup,circles): #计算某一个确定圆心能增长的最大半径
     res = float('inf')
-    x = tup[0]
-    y = tup[1]
-
+    x,y = tup[0], tup[1]
     if x <= -1 or x >= 1 or y <= -1 or y >= 1:
         return 0
     else:
@@ -29,35 +21,31 @@ def max_residue_distance(tup,circles): #计算圆能增长的最大半径
 
 
 def ball_in_box(m=5, blockers=[(0.5, 0.5), (0.5, -0.5), (0.5, 0.3)]):
-    best_circles = []
-    if m == 0:  # ugly
-        return best_circles
-    best_sum = 0
     blockers_l=len(blockers)
-    init_circle=[]
-    for tup in blockers:
-        init_circle.append((tup[0],tup[1],0))  # blockers 当做 半径0气球
+    generate_pair_random = lambda x,y,fix: (x+fix*(random.random()*2-1),y+fix*(random.random()*2-1))  # 按中心位置随机生成圆位置(半径为0)
+    J_function = lambda circles:sum([math.pi*circle[2]**2 for circle in circles])
+    init_cirs = [(tup[0],tup[1],0) for tup in blockers]  # blockers当做气球
+    best_value = 0
+    best_circles_all = 0,0,0
+    for __ in range(200):
+        cur_cirs = init_cirs[:]
+        while len(cur_cirs) < blockers_l + m:
+            best_circle = [0,0,0]
+            for k in range(2):  # 基本上可以证明贪心是错误的,k是迭代次数,在一片区域寻找,然后在最优解的附近一个格子范围继续寻找
+                i = 0  # radius
+                better_circle = [0,0,0]
+                while i <= 1000 or better_circle[2] == 0:
+                    tmp_pos = generate_pair_random(best_circle[0], best_circle[1], 0.02**k)
+                    tmp = max_residue_distance(tmp_pos,cur_cirs)
+                    if better_circle[2] < tmp :
+                        better_circle[2] = tmp
+                        better_circle[0],better_circle[1] =tmp_pos
+                    i+=1
+                best_circle=better_circle
+            cur_cirs.append(tuple(best_circle))
+        cost = J_function(cur_cirs)
+        if cost > best_value:
+            best_value = cost
+            best_circles_all = cur_cirs
 
-    generate_three = lambda: (random.random()*2 - 1,random.random()*2 - 1, 0)  # 随机生成圆(半径为0)
-
-    tim =(int)(500000/(pow(m,1.65)))  # 迭代次数
-    # tim=10000000
-    # print(tim)
-    if tim == 0:  # 如果m非常大
-        tim = 1
-    for _ in range(tim):
-        current_circles = init_circle[:]
-        while True:
-            x, y, _ = generate_three()
-
-            dis = max_residue_distance((x, y, 0), current_circles) - 0.0000000001  # precision control like cpp
-
-            if dis > 0:
-                current_circles.append((x, y, dis))
-                if len(current_circles) >= m + blockers_l:
-                    break
-        current_sum = area_sum_c(current_circles)
-        if current_sum > best_sum:
-            best_circles = current_circles
-            best_sum = current_sum
-    return best_circles[blockers_l:]
+    return best_circles_all[blockers_l:]
